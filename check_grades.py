@@ -5,13 +5,13 @@ import urllib.parse
 from datetime import datetime # 用作具体时间,可以用来实现定时获取的效果
 from zoneinfo import ZoneInfo # 用作判断时区
 
-# Bark配置
+# Bark配置,你可以在GitHub Secret中设置环境变量,也可以手动替换为你个人的BARK_TOKEN
 BARK_TOKEN = os.environ["BARK_TOKEN"]
 
-# 成绩数据接口 URL
-GRADES_URL = "https://bkjx.nenu.edu.cn/new/student/xskccj/kccjDatas"
+# 成绩数据接口 URL,请替换为kccj/main.page的URL
+GRADES_URL = "请替换"
 
-# Cookies
+# Cookies,你可以在GitHub Secret中设置环境变量,也可以手动替换为你个人的Cookie
 COOKIES = {
     "JSESSIONID": os.environ["JSESSIONID"],
     "iPlanetDirectoryPro": os.environ["IPLANETDIRECTORYPRO"],
