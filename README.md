@@ -2,10 +2,15 @@
 You'll be notificated by BARK
 
 ## What’s this?
+
 期末周,既要忍受考试的痛苦,又要忍受等分数的痛苦
+
 这是一个**Python脚本**,来自于Chat老师和Gemini老师
+
 它能够实时监控教务系统的成绩变化动态
+
 将此**Python脚本**配合**GitHub Action**和**Bark** 使用
+
 当成绩变化时,你的手机会接收到通知
 
 ## How to use?
