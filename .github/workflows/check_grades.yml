@@ -1,0 +1,45 @@
+name: Check Grades
+
+on:
+  schedule:
+    - cron: '0 */8 * * *' #这里每八小时运行一次,请根据实际需要修改!!!
+  workflow_dispatch:
+
+jobs:
+  check-and-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: Experiment
+
+    - name: Synchronize with remote branch
+      run: git pull --rebase
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run script
+      env:
+        BARK_TOKEN: ${{ secrets.BARK_TOKEN }}
+        JSESSIONID: ${{ secrets.JSESSIONID }}
+        ACW_TC: ${{ secrets.ACW_TC }}
+        IPLANETDIRECTORYPRO: ${{ secrets.IPLANETDIRECTORYPRO }}
+      run: python check_grades.py
+
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add grades.json
+        git diff-index --quiet HEAD || git commit -m "Update grades data"
+        git push
