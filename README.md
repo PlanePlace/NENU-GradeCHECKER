@@ -22,7 +22,7 @@ You'll be notificated by BARK
 ### What should I do?
 1. 将以上准备好的数据填写到check_grades.py中
 2. 修改.github/workflows/check_grades.yml中的成绩检查周期
-3. Repository的设置 - Actions - General - Workflow permissions - 修改为 Read repository contents and packages permissions
+3. Repository的设置 - Actions - General - Workflow permissions - 修改为 Read and write permissions
 4. 手动在 Actions - Check Grades 中运行一下工作链,检查能够是否正常工作
 
 ## Final
