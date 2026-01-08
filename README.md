@@ -16,14 +16,18 @@ You'll be notificated by BARK
 ## How to use?
 ### What should I prepare?
 1. BARK_TOKEN
-2. kccj/main.page 的 URL
-3. Cookies - JSESSIONID、iPlanetDirectoryPro、acw_tc
-4. kccjData” 的 请求头数据、Payload数据
+2. Cookies - JSESSIONID、iPlanetDirectoryPro、acw_tc
 ### What should I do?
-1. 将以上准备好的数据填写到check_grades.py中
-2. 修改.github/workflows/check_grades.yml中的成绩检查周期
-3. Repository的设置 - Actions - General - Workflow permissions - 修改为 Read and write permissions
-4. 手动在 Actions - Check Grades 中运行一下工作链,检查能够是否正常工作
+1. 在 Repository 的设置中 Secrets and Variables - Actions - 添加四个 Repository secrets
+
+  名称分别是  a. ACW_TC
+            b. BARK_TOKEN
+            c. IPLANETDIRECTORYPRO
+            d. JSESSIONID
+  并填写对应字段
+
+2. Repository的设置 - Actions - General - Workflow permissions - 修改为 Read and write permissions
+3. 手动在 Actions - Check Grades 中运行一下工作链,检查能够是否正常工作
 
 ## Final
 **心想事成!**
