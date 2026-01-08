@@ -2,66 +2,67 @@ import requests
 import json
 import os
 import urllib.parse
-from datetime import datetime # 用作具体时间,可以用来实现定时获取的效果
+from datetime import datetime
 from zoneinfo import ZoneInfo # 用作判断时区
 
-# Bark配置,你可以在GitHub Secret中设置环境变量,也可以手动替换为你个人的BARK_TOKEN
+# Bark配置
 BARK_TOKEN = os.environ["BARK_TOKEN"]
 
-# 成绩数据接口 URL,请替换为kccj/main.page的URL
-GRADES_URL = "请替换"
+# 成绩数据接口URL
+GRADES_URL = "https://bkjx.nenu.edu.cn/new/student/xskccj/kccjDatas"
 
-# Cookies,你可以在GitHub Secret中设置环境变量,也可以手动替换为你个人的Cookie
+# Cookie
 COOKIES = {
     "JSESSIONID": os.environ["JSESSIONID"],
     "iPlanetDirectoryPro": os.environ["IPLANETDIRECTORYPRO"],
     "acw_tc": os.environ["ACW_TC"]
 }
 
-# 成绩数据的存储文件
+# 数据存储文件
 DATA_FILE = "grades.json"
 
-# 设定时区,避免GitHub造成的时区不符,同时是一个定时器,8:00-22:00检查,其他时间段不工作
 def is_night_time():
     # 使用推荐的 datetime.now(ZoneInfo("UTC"))
     beijing_time = datetime.now(ZoneInfo("UTC")).astimezone(ZoneInfo("Asia/Shanghai"))
     hour = beijing_time.hour
+    # 您可以去掉这行print，或者保留它以便观察
     print(f"当前北京时间是: {hour}点")
     return hour >= 22 or hour < 8
 
-# 获取成绩数据:以下为请求头数据,请根据自己的"kccjData"请求头进行修改
 def fetch_grades():
     headers = {
-        'Accept': '请替换',
-        'Accept-Language': '请替换',
-        'Connection': '请替换',
-        'Content-Type': '请替换',
-        'Origin': '请替换',
-        'Referer': '请替换',
-        'Sec-Fetch-Dest': '请替换',
-        'Sec-Fetch-Mode': '请替换',
-        'Sec-Fetch-Site': '请替换',
-        'User-Agent': '请替换',
-        'X-Requested-With': '请替换',
-        'sec-ch-ua': '请替换',
-        'sec-ch-ua-mobile': '请替换',
-        'sec-ch-ua-platform': '请替换'
+        'Accept': 'application/json, text/javascript, */*; q=0.01',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Connection': 'keep-alive',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+        'Origin': 'https://bkjx.nenu.edu.cn',
+        'Referer': 'https://bkjx.nenu.edu.cn/new/student/xskccj/kccjList.page',
+        'Sec-Fetch-Dest': 'empty',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Site': 'same-origin',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36',
+        'X-Requested-With': 'XMLHttpRequest',
+        'sec-ch-ua': '"Not)A;Brand";v="8", "Chromium";v="138", "Google Chrome";v="138"',
+        'sec-ch-ua-mobile': '?0',
+        'sec-ch-ua-platform': '"macOS"'
     }
-    # Payload 数据,请根据自己的“kccjData“Payload进行修改
+    # Payload 构建
     payload = {
-        'xnxqdm': '请替换', # 这个是学期代码,比如202401、202402这样的 01就是秋季学期 02就是秋季学期
-        'source': '请替换',
-        'page': '请替换',
-        'rows': '请替换',
-        'sort': '请替换',
-        'order': '请替换'
+        'xnxqdm': '202501', # Correct academic semester code
+        'source': 'kccjlist',
+        'page': '1',
+        'rows': '150', # Using a large number to get all grades at once
+        'sort': 'xnxqdm,kcmc',
+        'order': 'asc'
     }
     r = requests.post(GRADES_URL, headers=headers, cookies=COOKIES, data=payload)
     r.raise_for_status()
     data = r.json()
     courses = []
     for item in data["rows"]:
-        course_str = f"{item['kcmc']} - {item['zcj']}分" # 获取的关键信息,这里用了课程名称和课程分数
+        # 你可以自行决定要用什么字段做“唯一标识”
+        # 这里用课程名 + 分数
+        course_str = f"{item['kcmc']} - {item['zcj']}分"
         courses.append(course_str)
     return courses
 
@@ -76,12 +77,15 @@ def save_data(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 def send_bark(title, body):
+    # 为了能正确处理中文、空格等特殊字符，需要进行URL编码
     encoded_title = urllib.parse.quote(title)
     encoded_body = urllib.parse.quote(body)
 
+    # 重新构造正确的Bark URL
     url = f"https://api.day.app/{BARK_TOKEN}/{encoded_title}/{encoded_body}"
 
-    url += "?group=教务通知" # 可选
+    # 【可选建议】您可以加上group参数，让来自这个脚本的通知自动分组
+    url += "?group=教务通知"
 
     print(f"正在发送Bark通知...")
     requests.get(url)
@@ -91,12 +95,18 @@ def main():
         print("夜间时间，停止检查")
         return
 
+    # --- 请确保以下关键步骤顺序正确 ---
+    
+    # 1. 从服务器获取最新成绩。
     courses = fetch_grades()
     
+    # 2. 从文件加载之前保存的旧成绩。
     old_courses = load_old_data()
     
+    # 3. 通过对比两个列表，定义 'new_courses'。
     new_courses = [c for c in courses if c not in old_courses]
 
+    # 4. 现在，检查 'new_courses' 列表里是否有内容。
     if new_courses:
         title = "🎉 新成绩发布"
         body = "、".join(new_courses)
@@ -105,6 +115,7 @@ def main():
     else:
         print("暂无新成绩")
 
+    # 5. 为下一次运行保存最新的成绩。
     save_data(courses)
 
 if __name__ == "__main__":
