@@ -20,10 +20,11 @@ You'll be notificated by BARK
 ### What should I do?
 1. 在 Repository 的设置中 Secrets and Variables - Actions - 添加四个 Repository secrets  
   
-  名称分别是  a. ACW_TC  
-            b. BARK_TOKEN  
-            c. IPLANETDIRECTORYPRO  
-            d. JSESSIONID  
+  名称分别是  
+  a. ACW_TC  
+  b. BARK_TOKEN  
+  c. IPLANETDIRECTORYPRO  
+  d. JSESSIONID  
   并填写对应字段  
 
 2. Repository的设置 - Actions - General - Workflow permissions - 修改为 Read and write permissions
