@@ -15,8 +15,10 @@ You'll be notificated by BARK
 
 ## How to use?
 ### What should I prepare?
-1. BARK_TOKEN
-![Image text](https://raw.githubusercontent.com/PlanePlace/NENU-GradeCHECKER/refs/heads/main/imgs/IMG_5720.JPG)
+1. BARK_TOKEN  
+
+<img src="https://raw.githubusercontent.com/PlanePlace/NENU-GradeCHECKER/refs/heads/main/imgs/IMG_5720.JPG" width="300" alt="Image text" />  
+
 2. Cookies - JSESSIONID、iPlanetDirectoryPro、acw_tc
 ![Image text](https://raw.githubusercontent.com/PlanePlace/NENU-GradeCHECKER/refs/heads/main/imgs/Screenshot%202026-01-08%20at%2012.36.16%E2%80%AFPM.png)
 ### What should I do?
@@ -33,5 +35,6 @@ You'll be notificated by BARK
 3. 手动在 Actions - Check Grades 中运行一下工作链,检查能够是否正常工作
 
 ## Final
-![Image text](https://raw.githubusercontent.com/PlanePlace/NENU-GradeCHECKER/refs/heads/main/imgs/IMG_5722.PNG)
+<img src="https://raw.githubusercontent.com/PlanePlace/NENU-GradeCHECKER/refs/heads/main/imgs/IMG_5722.PNG" width="300" alt="Image text" />  
+
 **心想事成!**
